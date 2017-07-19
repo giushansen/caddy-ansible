@@ -84,8 +84,14 @@
     state: present
   when: caddy_setcap
 
+- name: Create access log file
+  copy: content='' dest='/var/log/access.log' owner={{ caddy_user }}
+
+- name: Create errors log file
+  copy: content='' dest='/var/log/errors.log' owner={{ caddy_user }}
+
 - name: Create web directory
-  file: path={{ octochef_site_dir }} state=directory owner={{ caddy_user }} mode='0644'
+  file: path={{ octochef_site_dir }} state=directory owner={{ caddy_user }} mode='0744'
 
 - name: Create Octochef site
   copy: content="{{ octochef_site }}" dest="{{ octochef_site_dir }}/index.html" owner={{ caddy_user }}

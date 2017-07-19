@@ -30,4 +30,6 @@ caddy_config: |
     gzip
     # tls email@example.com
     root /var/www
+    log /var/log/access.log
+    errors /var/log/errors.log
   }
