@@ -3,7 +3,7 @@
 caddy_arch: amd64
 caddy_user: www-data
 caddy_home: /home/caddy
-caddy_features: http.git
+# caddy_features: http.git
 caddy_update: yes
 caddy_bin_dir: /usr/local/bin
 caddy_conf_dir: /etc/caddy
@@ -22,9 +22,12 @@ caddy_systemd_private_devices: "true"
 caddy_systemd_protect_home: "true"
 caddy_systemd_protect_system: "full"
 caddy_setcap: yes
+octochef_site_dir: /var/www
+octochef_site: |
+  <h1>Hello World!</h1>
 caddy_config: |
-  localhost:2020
-  gzip
-  # tls email@example.com
-  # root /var/www
-  git github.com/antoiner77/caddy-ansible
+  http:// {
+    gzip
+    # tls email@example.com
+    root /var/www
+  }

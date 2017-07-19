@@ -9,18 +9,27 @@
   when: caddy_update
   register: caddy_releases_cache
 
-- name: Set Caddy features
-  copy: content="{{ caddy_features }}" dest={{ caddy_home }}/features.txt
-  when: caddy_update
-  register: caddy_features_cache
+# - name: Set Caddy features
+#   copy: content="{{ caddy_features }}" dest={{ caddy_home }}/features.txt
+#   when: caddy_update
+#   register: caddy_features_cache
+
+# - name: Download Caddy
+#   get_url: url=https://caddyserver.com/download/linux/{{ caddy_arch }}?plugins={{ caddy_features }} dest={{ caddy_home }}/caddy.tar.gz force=yes
+#   when: caddy_releases_cache.changed or caddy_features_cache.changed
+#   register: caddy_binary_cache
+
 
 - name: Download Caddy
-  get_url: url=https://caddyserver.com/download/linux/{{ caddy_arch }}?plugins={{ caddy_features }} dest={{ caddy_home }}/caddy.tar.gz force=yes
-  when: caddy_releases_cache.changed or caddy_features_cache.changed
+  get_url: url=https://caddyserver.com/download/linux/{{ caddy_arch }} dest={{ caddy_home }}/caddy.tar.gz force=yes
+  when: caddy_releases_cache.changed
   register: caddy_binary_cache
 
+# - name: Download Caddy
+#   get_url: url=https://caddyserver.com/download/linux/{{ caddy_arch }}?plugins={{ caddy_features }} dest={{ caddy_home }}/caddy.tar.gz
+
 - name: Download Caddy
-  get_url: url=https://caddyserver.com/download/linux/{{ caddy_arch }}?plugins={{ caddy_features }} dest={{ caddy_home }}/caddy.tar.gz
+  get_url: url=https://caddyserver.com/download/linux/{{ caddy_arch }} dest={{ caddy_home }}/caddy.tar.gz
 
 - name: Extract Caddy
   unarchive: src={{ caddy_home }}/caddy.tar.gz dest={{ caddy_home }} copy=no owner={{ caddy_user }}
@@ -74,6 +83,12 @@
     capability: cap_net_bind_service+ep
     state: present
   when: caddy_setcap
+
+- name: Create web directory
+  file: path={{ octochef_site_dir }} state=directory owner={{ caddy_user }} mode='0644'
+
+- name: Create Octochef site
+  copy: content="{{ octochef_site }}" dest="{{ octochef_site_dir }}/index.html" owner={{ caddy_user }}
 
 - name: Start Caddy service
   service: name=caddy state=started enabled=yes
